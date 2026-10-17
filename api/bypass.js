@@ -155,7 +155,8 @@ async function hop(url, jars, referer, deadline) {
   } finally { clearTimeout(t); }
 }
 
-async function resolve(start) {
+async function resolve(start, dbg) {
+  dbg = dbg || { hops: [] };
   const deadline = Date.now() + BUDGET;
   const jars = {}, trail = [start];
   let url = start, referer = "", html = "";
@@ -164,6 +165,7 @@ async function resolve(start) {
   for (let i = 0; i < MAX_HOPS; i++) {
     await assertPublic(url);
     const r = await hop(url, jars, referer, deadline);
+    dbg.hops.push({ url, status: r.status, type: r.type, redirect: r.location || null, bytes: r.text.length });
     if (r.location) {
       referer = url;
       url = new URL(r.location, url).href; trail.push(url);
@@ -172,6 +174,7 @@ async function resolve(start) {
     const isText = !r.type || /text|json|xml|html/i.test(r.type);
     if (!isText || /attachment/i.test(r.disp)) return { url, kind: "file", trail, html: "" };
     html = r.text;
+    dbg.snippet = html.replace(/\s+/g, " ").slice(0, 700);
     const next = findNext(html, url);
     if (!next || trail.includes(next)) return { url, kind: "page", trail, html };
     referer = url; url = next; trail.push(next);
@@ -201,7 +204,9 @@ module.exports = async (req, res) => {
       } catch (e) { /* lanjut ke cara bawaan */ }
     }
 
-    const r = await resolve(target);
+    const dbg = { hops: [] };
+    const r = await resolve(target, dbg);
+    if (q.debug === "1") return send(200, { debug: dbg, result: r.url, kind: r.kind });
     const changed = r.url !== target;
     const links = mode === "web" && r.html ? anchors(r.html, r.url).filter(a => a.score > 0).slice(0, 15) : [];
     if (r.kind === "file" || changed || links.length) {
