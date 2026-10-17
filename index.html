@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Secretly Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff3d81;--glass:rgba(255,255,255,.08);--line:rgba(255,255,255,.18);--txt:#fff;--mut:rgba(255,255,255,.7)}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{font-family:Manrope,system-ui,sans-serif;color:var(--txt);background:#12060a;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+#bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.shade{position:fixed;inset:0;background:linear-gradient(#0008,#0004 40%,#000a);z-index:-1}
+svg.i{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.glass{background:var(--glass);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border:1px solid var(--line);box-shadow:0 8px 30px #0004}
+nav{position:sticky;top:10px;z-index:10;margin:10px auto 0;width:min(560px,calc(100% - 20px));border-radius:22px;padding:8px;display:flex;align-items:center;gap:6px}
+nav .brand{font:800 1.05rem Outfit;display:flex;gap:8px;align-items:center;padding:0 8px;flex:1;white-space:nowrap}
+.btn{font:600 .9rem Manrope;color:var(--txt);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.06);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);text-decoration:none;transition:background .2s,transform .1s}
+.btn:hover,.btn.on{background:rgba(255,61,129,.28);border-color:rgba(255,61,129,.6)}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #fff;outline-offset:2px}
+main{width:min(560px,calc(100% - 20px));margin:0 auto;padding:26px 0 40px}
+.page{display:none}.page.on{display:block}
+h1{font:800 clamp(2.2rem,9vw,3.2rem)/1.05 Outfit;letter-spacing:-.02em;margin:34px 0 12px}
+h1 span{color:var(--pink)}
+.lead{color:var(--mut);line-height:1.6;margin-bottom:22px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{border-radius:18px;padding:16px 8px;text-align:center}
+.stat b{display:block;font:800 1.6rem Outfit}.stat small{color:var(--mut)}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}.tabs .btn{white-space:nowrap}
+.card{border-radius:24px;padding:18px}
+.card h2{font:700 1.15rem Outfit;display:flex;gap:8px;align-items:center;margin-bottom:14px}
+.card p.d{color:var(--mut);font-size:.88rem;margin-bottom:12px;line-height:1.5}
+input[type=text],textarea{width:100%;padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.28);backdrop-filter:blur(8px);color:#fff;font:500 .95rem Manrope;margin-bottom:10px}
+textarea{min-height:130px;resize:vertical;font-family:ui-monospace,Consolas,monospace;font-size:.82rem}
+.row{display:flex;gap:8px}.row .btn{flex:1}
+.go{background:linear-gradient(135deg,#ff3d81cc,#c2185bcc);border-color:#ff7aa8}
+.out{display:none;margin-top:12px;border-radius:16px;padding:12px;background:rgba(0,0,0,.35);border:1px solid var(--line);word-break:break-all;font:.82rem ui-monospace,Consolas,monospace;line-height:1.5;max-height:240px;overflow:auto}
+.out.show{display:block}.out.err{border-color:#ff6b6b;color:#ffb0b0}
+.drop{display:block;text-align:center;padding:26px 10px;border:1.5px dashed var(--line);border-radius:16px;cursor:pointer;margin-bottom:10px;color:var(--mut)}
+.drop input{display:none}.drop .i{width:1.8em;height:1.8em;display:block;margin:0 auto 8px}
+.prev{max-width:100%;max-height:200px;border-radius:14px;margin-bottom:10px;display:none}
+.dev{display:flex;align-items:center;gap:12px;border-radius:18px;padding:14px;margin-bottom:10px;color:#fff;text-decoration:none;transition:background .2s}
+.dev:hover{background:rgba(255,255,255,.14)}
+.dev .logo{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;flex:none}
+.dev .logo svg{width:24px;height:24px;fill:#fff}
+.dev b{display:flex;align-items:center;gap:6px;font-size:1rem}
+.dev small{color:var(--mut)}
+.vb{width:18px;height:18px;flex:none}
+.foot{text-align:center;color:var(--mut);font-size:.8rem;margin-top:26px}
+main{padding-bottom:190px}
+.mp{display:grid;gap:10px}
+.mp .item{border-radius:20px;padding:14px;display:flex;gap:12px;align-items:center}
+.mp .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:rgba(255,61,129,.25);flex:none}
+.mp .inf{flex:1;min-width:0}.mp b{display:block;font:700 1rem Outfit}.mp small{color:var(--mut)}
+.mp .btn{padding:10px 12px}
+.tag{display:inline-block;font:700 .75rem Manrope;padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.12);margin-top:5px}
+.srch{margin-bottom:12px}
+.mp .ic img{width:100%;height:100%;object-fit:cover;border-radius:14px}
+.lbl{display:block;font:700 .85rem Manrope;margin:2px 0 6px}
+.req{color:var(--pink)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== v1.2: dock besar, menu titik tiga, rating, update ===== */
+.dock{position:fixed;top:auto;right:auto;height:auto;width:min(560px,calc(100% - 20px));max-width:none;margin:0;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:20;display:flex;align-items:center;gap:7px;padding:12px;border-radius:26px;background:rgba(20,8,12,.38);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);border:1px solid rgba(255,255,255,.28);box-shadow:0 14px 44px #000a}
+.dock .btn{flex:1 1 0;min-width:0;height:62px;padding:0;border-radius:17px;transition:flex-grow .3s cubic-bezier(.3,1.4,.5,1),background .2s}
+.dock .btn .i{width:29px;height:29px}
+.dock .btn.on{flex-grow:1.7;background:rgba(255,61,129,.4);border-color:rgba(255,61,129,.7)}
+.btn{position:relative}
+.btn.sq{padding:10px;width:42px}
+.dotb{display:none;position:absolute;top:5px;right:5px;width:10px;height:10px;border-radius:50%;background:var(--pink);box-shadow:0 0 0 2px rgba(0,0,0,.45)}
+.dotb.show{display:block}
+nav:not(.dock){gap:6px}
+@media(max-width:470px){
+  nav:not(.dock){gap:4px}
+  nav:not(.dock) .brand{padding:0 4px;font-size:.98rem}
+  nav:not(.dock) .btn{padding:10px}
+  nav:not(.dock) .btn.sq{width:40px}
+  nav:not(.dock) .btn:not(.on):not(.sq) .t{display:none}
+}
+#menu-ov{position:fixed;inset:0;z-index:25;display:none}
+#menu-ov.show{display:block}
+#menu{position:fixed;right:10px;z-index:30;width:min(310px,calc(100% - 20px));max-height:calc(100dvh - 250px);overflow-y:auto;border-radius:22px;padding:8px;display:none;background:rgba(20,8,12,.78);transform-origin:top right}
+#menu.show{display:block;animation:pop .16s ease-out}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(-4px)}to{opacity:1;transform:none}}
+#menu .gh{font:700 .7rem Manrope;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);padding:10px 12px 4px}
+#menu hr{border:0;border-top:1px solid var(--line);margin:6px 4px}
+.mi{width:100%;display:flex;align-items:center;gap:12px;padding:12px;border:0;background:none;color:#fff;font:600 .95rem Manrope;border-radius:14px;cursor:pointer;text-align:left;text-decoration:none}
+.mi:hover,.mi:active{background:rgba(255,255,255,.12)}
+.mi .i{width:20px;height:20px}
+.mi .nb{margin-left:auto;font:800 .65rem Manrope;background:var(--pink);padding:3px 8px;border-radius:99px;display:none}
+.mi .nb.show{display:inline-block}
+.row.t3 .btn{padding:10px 8px;font-size:.85rem}
+#toast{position:fixed;left:50%;bottom:calc(132px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40;background:rgba(20,8,12,.85);border:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:11px 18px;border-radius:99px;font:600 .88rem Manrope;opacity:0;pointer-events:none;transition:opacity .25s;max-width:calc(100% - 30px);text-align:center}
+#toast.show{opacity:1}
+h2.sec{font:700 1.1rem Outfit;margin:24px 0 10px}
+.avg{font:800 3.2rem/1 Outfit}
+.sr{display:inline-flex;gap:3px;color:rgba(255,255,255,.35)}
+.sr .i{width:18px;height:18px}.sr .i.on{fill:#ffc64d;stroke:#ffc64d}
+.sr.big .i{width:26px;height:26px}
+.stars{display:flex;gap:4px;justify-content:center;margin:4px 0 16px}
+.sb{background:none;border:0;padding:5px;color:rgba(255,255,255,.4);cursor:pointer;border-radius:12px}
+.sb .i{width:40px;height:40px}
+.sb.on{color:#ffc64d}.sb.on .i{fill:#ffc64d}
+.sb:focus-visible{outline:2px solid #fff}
+.rv{border-radius:18px;padding:14px}
+.rv .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.rv b{font:700 .95rem Outfit}.rv small{color:var(--mut);margin-left:auto}
+.rv p{color:rgba(255,255,255,.88);line-height:1.55;font-size:.9rem;word-break:break-word}
+.upd .card{margin-bottom:12px}
+.upd .hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.upd .hd small{color:var(--mut);margin-left:auto}
+.upd .tag{margin:0}.upd .tag.new{background:var(--pink)}
+.upd h3{font:700 1.05rem Outfit;margin-bottom:8px}
+.upd ul{padding-left:18px;color:var(--mut);line-height:1.65;font-size:.9rem}
+details.card{margin-bottom:10px;padding:14px 16px}
+details summary{cursor:pointer;font:700 .98rem Outfit;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details p{color:var(--mut);line-height:1.6;margin-top:10px;font-size:.9rem}
+</style>
+</head>
+<body>
+<!-- Background video: letakkan file bg.mp4 sefolder dengan index.html -->
+<video id="bg" autoplay muted loop playsinline preload="auto"><source src="bg.mp4" type="video/mp4"></video>
+<div class="shade"></div>
+
+<!-- Ikon web (SVG), bukan emoji keyboard -->
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></symbol>
+<symbol id="tools" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></symbol>
+<symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></symbol>
+<symbol id="link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+<symbol id="globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+<symbol id="code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+<symbol id="video" viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="14" rx="3"/><path d="M16 10l6-3v10l-6-3"/></symbol>
+<symbol id="img" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 16l-5-5-9 9"/></symbol>
+<symbol id="lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="up" viewBox="0 0 24 24"><path d="M12 16V4M6 10l6-6 6 6M4 20h16"/></symbol>
+<symbol id="copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="3"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></symbol>
+<symbol id="open" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+<symbol id="paste" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="3"/><path d="M9 4h6v3H9z"/></symbol>
+<symbol id="arrow" viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></symbol>
+<symbol id="badge" viewBox="0 0 24 24"><path fill="#1d9bf0" stroke="none" d="M22.5 12.5c0-1.6-.9-3-2.3-3.7.4-1.5 0-3.1-1.2-4.2-1.1-1.1-2.7-1.5-4.2-1.2C14 2.1 12.6 1.2 11 1.2S8 2.1 7.2 3.4c-1.5-.4-3.1 0-4.2 1.2C1.900 5.700 1.500 7.300 1.900 8.800.600 9.500-.2 10.900-.2 12.500s.8 3 2.100 3.700c-.4 1.500 0 3.100 1.200 4.200 1.100 1.100 2.700 1.500 4.200 1.200.8 1.300 2.100 2.100 3.700 2.100s3-.8 3.700-2.100c1.500.4 3.100 0 4.200-1.200 1.100-1.100 1.500-2.700 1.200-4.200 1.300-.7 2.100-2.100 2.100-3.700z" transform="translate(1 -.5)"/><path fill="none" stroke="#fff" stroke-width="2.4" d="M7.500 12.300l3 3 6-6.300"/></symbol>
+<symbol id="dl" viewBox="0 0 24 24"><path d="M12 4v12M6 11l6 6 6-6M4 20h16"/></symbol>
+<symbol id="gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13M12 8c-3 0-5-1-5-3s3-2 5 3c2-5 5-5 5-3s-2 3-5 3"/></symbol>
+<symbol id="cart" viewBox="0 0 24 24"><path d="M3 4h3l2.500 11h10L21 7H7"/><circle cx="9" cy="20" r="1.500"/><circle cx="18" cy="20" r="1.500"/></symbol>
+<symbol id="key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></symbol>
+<symbol id="braces" viewBox="0 0 24 24"><path d="M8 4c-3 0-3 2-3 4s0 3-2 4c2 1 2 2 2 4s0 4 3 4M16 4c3 0 3 2 3 4s0 3 2 4c-2 1-2 2-2 4s0 4-3 4"/></symbol>
+<symbol id="hash" viewBox="0 0 24 24"><path d="M5 9h15M4 15h15M10 3L8 21M16 3l-2 18"/></symbol>
+<symbol id="plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></symbol>
+<symbol id="dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="19" r="1.3"/></symbol>
+<symbol id="star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+<symbol id="bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/></symbol>
+<symbol id="share" viewBox="0 0 24 24"><path d="M12 15V3M8 7l4-4 4 4M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/></symbol>
+<symbol id="help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1 1-1.1 1.7M12 17h.01"/></symbol>
+<symbol id="flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h12l-2 4 2 4H5"/></symbol>
+</defs></svg>
+
+<nav class="glass" id="topnav">
+  <div class="brand"><svg class="i"><use href="#lock"/></svg>Secretly</div>
+  <button class="btn on" data-page="home"><svg class="i"><use href="#home"/></svg><span class="t">Home</span></button>
+  <button class="btn" data-page="tools"><svg class="i"><use href="#tools"/></svg><span class="t">Tools</span></button>
+  <button class="btn" data-page="dev"><svg class="i"><use href="#user"/></svg><span class="t">Kontak</span></button>
+  <button class="btn sq" id="more-btn" aria-label="Menu lainnya" aria-haspopup="menu" aria-expanded="false"><svg class="i"><use href="#dots"/></svg><i class="dotb" id="more-dot"></i></button>
+</nav>
+<div id="menu-ov"></div>
+<div id="menu" class="glass" role="menu" aria-label="Menu lainnya">
+  <div class="gh">Navigasi</div>
+  <button class="mi" role="menuitem" data-page="home"><svg class="i"><use href="#home"/></svg>Home</button>
+  <button class="mi" role="menuitem" data-page="tools"><svg class="i"><use href="#tools"/></svg>Tools</button>
+  <button class="mi" role="menuitem" data-page="modfree"><svg class="i"><use href="#gift"/></svg>Modpack Free</button>
+  <button class="mi" role="menuitem" data-page="share"><svg class="i"><use href="#plus"/></svg>Share Modpack</button>
+  <button class="mi" role="menuitem" data-page="modsell"><svg class="i"><use href="#cart"/></svg>Forsell Modpack</button>
+  <button class="mi" role="menuitem" data-page="dev"><svg class="i"><use href="#user"/></svg>Kontak</button>
+  <hr>
+  <div class="gh">Fitur</div>
+  <button class="mi" role="menuitem" data-page="rating"><svg class="i"><use href="#star"/></svg>Rating</button>
+  <button class="mi" role="menuitem" data-page="updates"><svg class="i"><use href="#bell"/></svg>Update Terbaru<span class="nb" id="menu-new">BARU</span></button>
+  <button class="mi" role="menuitem" data-page="help"><svg class="i"><use href="#help"/></svg>Bantuan (FAQ)</button>
+  <button class="mi" role="menuitem" id="mi-share"><svg class="i"><use href="#share"/></svg>Bagikan Web</button>
+  <a class="mi" role="menuitem" id="mi-bug" target="_blank" rel="noopener"><svg class="i"><use href="#flag"/></svg>Lapor Bug / Saran</a>
+  <button class="mi" role="menuitem" id="mi-vid"><svg class="i"><use href="#video"/></svg><span id="vid-lbl">Matikan Video Latar</span></button>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<main>
+<!-- HOME -->
+<section class="page on" id="home">
+  <h1>Secretly <span>Tools</span></h1>
+  <p class="lead">Kumpulan tools gratis untuk melewati tautan, mengobfuscate Lua, dan mengubah video atau foto menjadi link. Semua dalam satu halaman, ringan dipakai di HP.</p>
+  <div class="stats">
+    <div class="stat glass"><b>10</b><small>Tools</small></div>
+    <div class="stat glass"><b>3</b><small>Kontak</small></div>
+    <div class="stat glass"><b>Free</b><small>Selamanya</small></div>
+  </div>
+  <div class="row t3" style="margin-top:18px">
+    <button class="btn go" data-page="tools"><svg class="i"><use href="#tools"/></svg>Buka Tools</button>
+    <button class="btn" data-page="rating"><svg class="i"><use href="#star"/></svg><span id="h-rate">Rating</span></button>
+    <button class="btn" data-page="updates"><svg class="i"><use href="#bell"/></svg>Update</button>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="page" id="tools">
+  <div class="tabs" id="tabs">
+    <button class="btn on" data-t="t-bypass"><svg class="i"><use href="#link"/></svg>Bypass Link</button>
+    <button class="btn" data-t="t-web"><svg class="i"><use href="#globe"/></svg>Bypass Web</button>
+    <button class="btn" data-t="t-obf"><svg class="i"><use href="#code"/></svg>Obfuscate</button>
+    <button class="btn" data-t="t-vid"><svg class="i"><use href="#video"/></svg>Video ke Link</button>
+    <button class="btn" data-t="t-img"><svg class="i"><use href="#img"/></svg>Foto ke Link</button>
+    <button class="btn" data-t="t-b64"><svg class="i"><use href="#lock"/></svg>Base64</button>
+    <button class="btn" data-t="t-json"><svg class="i"><use href="#braces"/></svg>JSON</button>
+    <button class="btn" data-t="t-pw"><svg class="i"><use href="#key"/></svg>Password</button>
+    <button class="btn" data-t="t-sha"><svg class="i"><use href="#hash"/></svg>SHA-256</button>
+    <button class="btn" data-t="t-url"><svg class="i"><use href="#link"/></svg>URL Encode</button>
+  </div>
+
+  <div class="card glass tool on" id="t-bypass">
+    <h2><svg class="i"><use href="#link"/></svg>Bypass Link</h2>
+    <p class="d">Mendukung bicolink, sfile, sfl.gl, sub4unlock dan sejenisnya.</p>
+    <input type="text" id="b-in" placeholder="Tempel tautan (bicolink / sfile / sfl.gl)" autocomplete="off">
+    <div class="row"><button class="btn" onclick="paste('b-in')" aria-label="Tempel"><svg class="i"><use href="#paste"/></svg></button>
+    <button class="btn go" style="flex:5" onclick="bypass('b-in','b-out','link')"><svg class="i"><use href="#arrow"/></svg>Proses tautan</button></div>
+    <div class="out" id="b-out"></div>
+  </div>
+
+  <div class="card glass tool" id="t-web" hidden>
+    <h2><svg class="i"><use href="#globe"/></svg>Bypass Web</h2>
+    <p class="d">Untuk halaman yang menahan tautan di balik timer atau pengalihan.</p>
+    <input type="text" id="w-in" placeholder="https://contoh-website.com/halaman" autocomplete="off">
+    <div class="row"><button class="btn" onclick="paste('w-in')" aria-label="Tempel"><svg class="i"><use href="#paste"/></svg></button>
+    <button class="btn go" style="flex:5" onclick="bypass('w-in','w-out','web')"><svg class="i"><use href="#arrow"/></svg>Proses website</button></div>
+    <div class="out" id="w-out"></div>
+  </div>
+
+  <div class="card glass tool" id="t-obf" hidden>
+    <h2><svg class="i"><use href="#code"/></svg>Obfuscate Lua</h2>
+    <p class="d">Mengubah kode Lua menjadi loader yang sulit dibaca. Berjalan di browser kamu.</p>
+    <textarea id="o-in" placeholder="print('Halo dunia')"></textarea>
+    <button class="btn go" style="width:100%" onclick="obf()"><svg class="i"><use href="#lock"/></svg>Obfuscate</button>
+    <div class="out" id="o-out"></div>
+  </div>
+
+  <div class="card glass tool" id="t-vid" hidden>
+    <h2><svg class="i"><use href="#video"/></svg>Video ke Link</h2>
+    <label class="drop"><svg class="i"><use href="#up"/></svg><span id="v-name">Pilih video (maks 50 MB)</span><input type="file" id="v-f" accept="video/*"></label>
+    <button class="btn go" style="width:100%" onclick="upload('v-f','v-out')"><svg class="i"><use href="#up"/></svg>Upload dan buat link</button>
+    <div class="out" id="v-out"></div>
+  </div>
+
+  <div class="card glass tool" id="t-img" hidden>
+    <h2><svg class="i"><use href="#img"/></svg>Foto ke Link</h2>
+    <label class="drop"><svg class="i"><use href="#up"/></svg><span id="i-name">Pilih foto (maks 50 MB)</span><input type="file" id="i-f" accept="image/*"></label>
+    <img class="prev" id="i-prev" alt="Pratinjau foto">
+    <button class="btn go" style="width:100%" onclick="upload('i-f','i-out')"><svg class="i"><use href="#up"/></svg>Upload dan buat link</button>
+    <div class="out" id="i-out"></div>
+  </div>
+
+  <div class="card glass tool" id="t-b64" hidden>
+    <h2><svg class="i"><use href="#lock"/></svg>Base64</h2>
+    <textarea id="x-in" placeholder="Teks atau string Base64"></textarea>
+    <div class="row"><button class="btn go" onclick="b64(1)">Encode</button><button class="btn go" onclick="b64(0)">Decode</button></div>
+    <div class="out" id="x-out"></div>
+  </div>
+
+  <div class="card glass tool" id="t-url" hidden>
+    <h2><svg class="i"><use href="#link"/></svg>URL Encode</h2>
+    <textarea id="u-in" placeholder="Teks atau URL"></textarea>
+    <div class="row"><button class="btn go" onclick="urlc(1)">Encode</button><button class="btn go" onclick="urlc(0)">Decode</button></div>
+    <div class="out" id="u-out"></div>
+  </div>
+
+  <div class="card glass tool" id="t-json" hidden>
+    <h2><svg class="i"><use href="#braces"/></svg>JSON Formatter</h2>
+    <textarea id="j-in" placeholder='{"nama":"Secretly"}'></textarea>
+    <div class="row"><button class="btn go" onclick="json(1)">Rapikan</button><button class="btn go" onclick="json(0)">Minify</button></div>
+    <div class="out" id="j-out"></div>
+  </div>
+
+  <div class="card glass tool" id="t-pw" hidden>
+    <h2><svg class="i"><use href="#key"/></svg>Password Generator</h2>
+    <input type="text" id="p-len" value="16" inputmode="numeric" placeholder="Panjang (8-64)">
+    <button class="btn go" style="width:100%" onclick="pw()"><svg class="i"><use href="#key"/></svg>Buat password</button>
+    <div class="out" id="p-out"></div>
+  </div>
+
+  <div class="card glass tool" id="t-sha" hidden>
+    <h2><svg class="i"><use href="#hash"/></svg>SHA-256</h2>
+    <textarea id="h-in" placeholder="Teks yang mau di-hash"></textarea>
+    <button class="btn go" style="width:100%" onclick="sha()"><svg class="i"><use href="#hash"/></svg>Buat hash</button>
+    <div class="out" id="h-out"></div>
+  </div>
+</section>
+
+<!-- KONTAK DEVELOPER -->
+<section class="page" id="dev">
+  <h1>Kontak <span>Developer</span></h1>
+  <p class="lead">Ada pertanyaan, bug, atau ide tools baru? Hubungi lewat salah satu kanal ini.</p>
+
+  <a class="dev glass" href="https://youtube.com/@Jefri" target="_blank" rel="noopener">
+    <span class="logo" style="background:#ff0000"><svg viewBox="0 0 24 24"><path d="M23.5 6.500a3 3 0 0 0-2.100-2.100C19.500 3.900 12 3.900 12 3.900s-7.500 0-9.400.5A3 3 0 0 0 .5 6.500C0 8.400 0 12 0 12s0 3.600.5 5.500a3 3 0 0 0 2.100 2.100c1.900.5 9.400.5 9.400.5s7.500 0 9.400-.5a3 3 0 0 0 2.100-2.100c.5-1.900.5-5.500.5-5.500s0-3.600-.5-5.500zM9.600 15.600V8.400l6.200 3.600z"/></svg></span>
+    <span><b>YouTube <svg class="vb"><use href="#badge"/></svg></b><small>@Jefri</small></span>
+  </a>
+
+  <a class="dev glass" href="https://tiktok.com/@sevcrett" target="_blank" rel="noopener">
+    <span class="logo" style="background:#000;border:1px solid var(--line)"><svg viewBox="0 0 24 24"><path d="M19.600 6.800a5.200 5.200 0 0 1-3.100-1.100 5.100 5.100 0 0 1-1.900-3.200h-3.300v13.100a2.800 2.800 0 1 1-2-2.700V9.600a6.200 6.200 0 1 0 5.300 6.100V9.100a8.400 8.400 0 0 0 5 1.600z"/></svg></span>
+    <span><b>TikTok <svg class="vb"><use href="#badge"/></svg></b><small>@sevcrett</small></span>
+  </a>
+
+  <a class="dev glass" href="https://wa.me/6287834270844" target="_blank" rel="noopener">
+    <span class="logo" style="background:#25d366"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.600 15L2 22l5.200-1.400A10 10 0 1 0 12 2zm5.800 14.200c-.2.700-1.400 1.300-2 1.400-.5.100-1.200.1-1.900-.1-.4-.1-1-.3-1.700-.6-3-1.300-5-4.300-5.100-4.500-.1-.2-1.200-1.600-1.200-3s.8-2.100 1-2.400c.3-.3.600-.3.800-.3h.6c.2 0 .5-.1.700.5l1 2.400c.1.200.1.400 0 .6l-.4.600c-.2.200-.3.400-.1.700.2.300.7 1.200 1.500 1.900 1 .9 1.900 1.200 2.200 1.300.3.200.5.100.7-.1l.9-1.100c.2-.3.400-.2.700-.1l2.200 1c.3.200.5.200.5.400.1.100.1.700-.1 1.400z"/></svg></span>
+    <span><b>WhatsApp <svg class="vb"><use href="#badge"/></svg></b><small>+62 878-3427-0844</small></span>
+  </a>
+</section>
+
+<!-- MODPACK FREE -->
+<section class="page" id="modfree">
+  <h1>Modpack <span>Free</span></h1>
+  <p class="lead">Modpack gratis, tinggal unduh. Daftar bisa diubah di array MOD_FREE pada script.</p>
+  <input type="text" class="srch" id="mf-q" placeholder="Cari modpack" autocomplete="off">
+  <div class="mp" id="mf-list"></div>
+</section>
+
+<!-- SHARE MODPACK -->
+<section class="page" id="share">
+  <h1>Share <span>Modpack</span></h1>
+  <p class="lead">Isi semua kolom, lalu modpack langsung tampil di menu Modpack Free.</p>
+  <div class="card glass">
+    <label class="lbl" for="s-n">Nama Modpack <span class="req">*</span></label>
+    <input type="text" id="s-n" maxlength="60" placeholder="Contoh: Modpack Style Santai" autocomplete="off">
+    <label class="lbl" for="s-t">Jenis File <span class="req">*</span></label>
+    <input type="text" id="s-t" maxlength="20" list="s-types" placeholder="ZIP / RAR / 7Z / APK" autocomplete="off">
+    <datalist id="s-types"><option value="ZIP"><option value="RAR"><option value="7Z"><option value="APK"></datalist>
+    <label class="lbl" for="s-l">Link Modpack <span class="req">*</span></label>
+    <input type="text" id="s-l" placeholder="https://www.mediafire.com/..." autocomplete="off" inputmode="url">
+    <label class="lbl" for="s-c">Credits <span class="req">*</span></label>
+    <input type="text" id="s-c" maxlength="40" placeholder="Nama pembuat" autocomplete="off">
+    <span class="lbl">Foto <span class="req">*</span></span>
+    <label class="drop"><svg class="i"><use href="#img"/></svg><span id="s-name">Pilih foto modpack</span><input type="file" id="s-f" accept="image/*"></label>
+    <img class="prev" id="s-prev" alt="Pratinjau foto">
+    <button class="btn go" style="width:100%" onclick="shareMod()"><svg class="i"><use href="#plus"/></svg>Kirim modpack</button>
+    <div class="out" id="s-out"></div>
+  </div>
+</section>
+
+<!-- FORSELL MODPACK -->
+<section class="page" id="modsell">
+  <h1>Forsell <span>Modpack</span></h1>
+  <p class="lead">Modpack premium. Tekan tombol keranjang untuk memesan langsung lewat WhatsApp.</p>
+  <input type="text" class="srch" id="ms-q" placeholder="Cari modpack" autocomplete="off">
+  <div class="mp" id="ms-list"></div>
+</section>
+
+<!-- RATING -->
+<section class="page" id="rating">
+  <h1>Beri <span>Rating</span></h1>
+  <p class="lead">Bantu Secretly berkembang. Rating dan ulasanmu tampil untuk semua pengunjung.</p>
+  <div class="card glass" style="text-align:center;margin-bottom:12px">
+    <div class="avg" id="r-avg">-</div>
+    <div id="r-avgstars" style="margin:8px 0 4px"></div>
+    <small id="r-count" style="color:var(--mut)">Memuat...</small>
+  </div>
+  <div class="card glass">
+    <span class="lbl" style="text-align:center">Rating kamu <span class="req">*</span></span>
+    <div class="stars" id="r-stars" role="group" aria-label="Pilih jumlah bintang"></div>
+    <label class="lbl" for="r-n">Nama (opsional)</label>
+    <input type="text" id="r-n" maxlength="30" placeholder="Anonim" autocomplete="off">
+    <label class="lbl" for="r-c">Ulasan (opsional)</label>
+    <textarea id="r-c" maxlength="200" style="min-height:90px;font-family:Manrope,system-ui,sans-serif;font-size:.95rem" placeholder="Ceritakan pengalamanmu memakai Secretly"></textarea>
+    <button class="btn go" style="width:100%" onclick="sendRating()"><svg class="i"><use href="#star"/></svg>Kirim rating</button>
+    <div class="out" id="r-out"></div>
+  </div>
+  <h2 class="sec">Ulasan terbaru</h2>
+  <div class="mp" id="r-list"></div>
+</section>
+
+<!-- UPDATE TERBARU -->
+<section class="page" id="updates">
+  <h1>Update <span>Terbaru</span></h1>
+  <p class="lead">Catatan perubahan dan fitur baru Secretly, dari yang paling baru.</p>
+  <div class="upd" id="u-list"></div>
+</section>
+
+<!-- BANTUAN -->
+<section class="page" id="help">
+  <h1>Bantuan <span>FAQ</span></h1>
+  <p class="lead">Pertanyaan yang paling sering ditanyakan.</p>
+  <details class="card glass"><summary>Apa itu Secretly?</summary><p>Kumpulan tools gratis (bypass tautan, obfuscate Lua, video dan foto ke link, Base64, JSON, dan lainnya) plus tempat berbagi dan menjual modpack, semua dalam satu halaman yang ringan di HP.</p></details>
+  <details class="card glass"><summary>Kenapa Bypass Link kadang gagal?</summary><p>Sebagian situs memakai captcha, timer berbasis token, atau iklan yang hanya bisa jalan di browser asli, jadi tidak bisa diproses otomatis. Coba tool Bypass Web, atau kirim tautan yang gagal lewat menu Lapor Bug / Saran.</p></details>
+  <details class="card glass"><summary>Apakah link hasil upload permanen?</summary><p>Ya, selama layanan penyimpanan aktif. Batas ukuran 50 MB per file dan hanya untuk foto atau video.</p></details>
+  <details class="card glass"><summary>Bagaimana cara Share Modpack?</summary><p>Buka menu Share Modpack, isi semua kolom (nama, jenis file, link, credits, foto), lalu kirim. Modpack langsung tampil di Modpack Free untuk semua pengunjung.</p></details>
+  <details class="card glass"><summary>Apakah hasil Obfuscate aman dari dibaca orang?</summary><p>Obfuscate di sini menyamarkan kode dengan XOR sederhana, jadi cukup untuk mempersulit pembacaan biasa tetapi bukan perlindungan yang kuat.</p></details>
+  <p style="margin-top:16px"><a class="btn go" id="help-bug" target="_blank" rel="noopener" style="width:100%"><svg class="i"><use href="#flag"/></svg>Lapor Bug / Saran</a></p>
+</section>
+
+<p class="foot">&copy; Secretly</p>
+</main>
+
+<nav class="dock" aria-label="Menu bawah">
+  <button class="btn on" data-page="home" aria-label="Home" title="Home"><svg class="i"><use href="#home"/></svg></button>
+  <button class="btn" data-page="tools" aria-label="Tools" title="Tools"><svg class="i"><use href="#tools"/></svg></button>
+  <button class="btn" data-page="modfree" aria-label="Modpack Free" title="Modpack Free"><svg class="i"><use href="#gift"/></svg></button>
+  <button class="btn" data-page="share" aria-label="Share Modpack" title="Share Modpack"><svg class="i"><use href="#plus"/></svg></button>
+  <button class="btn" data-page="modsell" aria-label="Forsell Modpack" title="Forsell Modpack"><svg class="i"><use href="#cart"/></svg></button>
+  <button class="btn" data-page="dev" aria-label="Kontak" title="Kontak"><svg class="i"><use href="#user"/></svg></button>
+</nav>
+
+<script>
+/* ====== KONFIGURASI ======
+   1) Supabase (Project Settings > API): isi SB_URL dan SB_KEY (anon / publishable key, BUKAN service_role)
+   2) Bypass memakai function /api/bypass (file api/bypass.js), tidak perlu diubah. */
+const SB_URL = "https://pjhreyoluozjmaehqjza.supabase.co";
+const SB_KEY = "sb_publishable_s_u2cWRCrZHkHvlPP9pN0Q_VhDqoMKI";
+const API_BYPASS = "/api/bypass?url=";
+const API_UPLOAD = "https://tmpfiles.org/api/v1/upload";   // cadangan kalau Supabase belum diisi (link hilang ±1 jam)
+const SB_READY = /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SB_URL) && !/ISI-/i.test(SB_URL) && SB_KEY.length > 30 && !/^ISI_/.test(SB_KEY);
+const MAX_MB = SB_READY ? 50 : 100;
+const sbH = x => { const o = {apikey: SB_KEY}; if(SB_KEY.startsWith("eyJ")) o.Authorization = "Bearer " + SB_KEY; return Object.assign(o, x || {}); };
+async function sbErr(r){ let m = ""; try{ const j = await r.json(); m = j.message || j.error || ""; }catch(e){} return new Error(m || ("HTTP " + r.status)); }
+async function sbUpload(blob, name){
+  const ext = ((name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 5)) || "bin";
+  const path = Date.now() + "-" + Math.random().toString(36).slice(2, 9) + "." + ext;
+  const r = await fetch(SB_URL + "/storage/v1/object/uploads/" + path, {method: "POST", headers: sbH({"Content-Type": blob.type || "application/octet-stream", "x-upsert": "false"}), body: blob});
+  if(!r.ok) throw await sbErr(r);
+  return SB_URL + "/storage/v1/object/public/uploads/" + path;
+}
+
+const $ = id => document.getElementById(id);
+const show = (id, txt, err, link) => {
+  const o = $(id); o.className = "out show" + (err ? " err" : ""); o.innerHTML = "";
+  const s = document.createElement("div"); s.textContent = txt; o.appendChild(s);
+  if (link && !err) {
+    const r = document.createElement("div"); r.className = "row"; r.style.marginTop = "10px";
+    r.innerHTML = '<button class="btn"><svg class="i"><use href="#copy"/></svg>Copy</button><a class="btn go" target="_blank" rel="noopener"><svg class="i"><use href="#open"/></svg>Buka</a>';
+    r.firstChild.onclick = () => { navigator.clipboard.writeText(txt); r.firstChild.lastChild.textContent = "Tersalin"; };
+    if (/^https?:\/\//.test(txt)) r.lastChild.href = txt; else r.lastChild.style.display = "none";
+    o.appendChild(r);
+  }
+};
+
+/* Navigasi halaman */
+function go(id){
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.id === id));
+  document.querySelectorAll("nav [data-page]").forEach(n => n.classList.toggle("on", n.dataset.page === id));
+  scrollTo({top: 0});
+  if(id === "rating") loadRatings();
+  if(id === "updates") markSeen();
+}
+document.querySelectorAll("[data-page]").forEach(b => b.onclick = () => go(b.dataset.page));
+/* Tab tools */
+document.querySelectorAll("#tabs [data-t]").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#tabs .btn").forEach(x => x.classList.toggle("on", x === b));
+  document.querySelectorAll(".tool").forEach(t => t.hidden = t.id !== b.dataset.t);
+});
+
+async function paste(id){ try{ $(id).value = await navigator.clipboard.readText(); }catch(e){ $(id).focus(); } }
+
+/* Bypass Link / Bypass Web (memanggil /api/bypass) */
+async function bypass(inp, out, mode){
+  const u = $(inp).value.trim();
+  if(!/^https?:\/\//i.test(u)) return show(out, "Masukkan tautan yang diawali http:// atau https://", true);
+  show(out, "Memproses... bisa sampai 10 detik");
+  try{
+    const r = await fetch(API_BYPASS + encodeURIComponent(u) + (mode === "web" ? "&mode=web" : ""));
+    let j; try{ j = await r.json(); }catch(e){ throw new Error(r.status === 404 ? "file api/bypass.js belum ikut ter-deploy di Vercel" : "balasan server tidak valid (HTTP " + r.status + ")"); }
+    if(!j.ok) throw new Error(j.error || "Hasil kosong");
+    show(out, j.result, false, true);
+    if(j.links && j.links.length){
+      const box = document.createElement("div"); box.style.marginTop = "12px";
+      const t = document.createElement("div"); t.style.opacity = ".7"; t.textContent = "Tautan lain di halaman:"; box.appendChild(t);
+      j.links.forEach(l => { const a = document.createElement("a"); a.href = l.url; a.target = "_blank"; a.rel = "noopener"; a.style.cssText = "display:block;color:#ffb3cf;margin-top:6px"; a.textContent = (l.text ? l.text + " - " : "") + l.url; box.appendChild(a); });
+      $(out).appendChild(box);
+    }
+  }catch(e){ show(out, "Bypass gagal: " + e.message, true); }
+}
+
+/* Obfuscate Lua (di browser). XOR murni aritmetika: jalan di Lua 5.1 / 5.3 / Luau */
+function obf(){
+  const src = $("o-in").value;
+  if(!src.trim()) return show("o-out", "Tempel kode Lua dulu.", true);
+  const key = Math.floor(Math.random() * 200) + 30, bytes = [];
+  for(const b of new TextEncoder().encode(src)) bytes.push(b ^ key);
+  const nm = () => "_" + Math.random().toString(36).slice(2, 8);
+  const [d, k, x, s, i, f, e] = [nm(), nm(), nm(), nm(), nm(), nm(), nm()];
+  const lua = "local " + d + "={" + bytes.join(",") + "};local " + k + "=" + key + ";" +
+    "local function " + x + "(a,b)local r,p=0,1;while a>0 or b>0 do local u,v=a%2,b%2;if u~=v then r=r+p end;a=(a-u)/2;b=(b-v)/2;p=p*2 end;return r end;" +
+    "local " + s + "={};for " + i + "=1,#" + d + " do " + s + "[" + i + "]=string.char(" + x + "(" + d + "[" + i + "]," + k + "))end;" +
+    "local " + f + "," + e + "=(loadstring or load)(table.concat(" + s + "));if not " + f + " then error(" + e + ") end;return " + f + "()";
+  show("o-out", lua, false, true);
+}
+
+/* Upload video / foto -> link permanen (Supabase Storage) */
+$("v-f").onchange = e => $("v-name").textContent = e.target.files[0]?.name || "Pilih video (maks 50 MB)";
+$("i-f").onchange = e => { const f = e.target.files[0]; if(!f) return;
+  $("i-name").textContent = f.name; const p = $("i-prev"); p.src = URL.createObjectURL(f); p.style.display = "block"; };
+async function upload(fid, out){
+  const f = $(fid).files[0];
+  if(!f) return show(out, "Pilih file dulu.", true);
+  if(f.size > MAX_MB * 1024 * 1024) return show(out, "Ukuran file melebihi " + MAX_MB + " MB.", true);
+  show(out, "Mengunggah... jangan tutup halaman");
+  try{
+    let url;
+    if(SB_READY){ url = await sbUpload(f, f.name); }
+    else{
+      const fd = new FormData(); fd.append("file", f);
+      const r = await fetch(API_UPLOAD, {method: "POST", body: fd});
+      const j = await r.json();
+      url = j.data?.url || j.url; if(!url) throw new Error("Server tidak mengembalikan link");
+      url = url.replace("tmpfiles.org/", "tmpfiles.org/dl/").replace("/dl/dl/", "/dl/");
+    }
+    show(out, url, false, true);
+  }catch(e){ show(out, "Upload gagal: " + e.message, true); }
+}
+
+/* Modpack: edit data di sini */
+const WA = "6287834270844";
+const MOD_FREE = [
+  {n:"Modpack Contoh 1", d:"Deskripsi singkat modpack", s:"25 MB", u:"#"},
+  {n:"Modpack Contoh 2", d:"Deskripsi singkat modpack", s:"48 MB", u:"#"},
+  {n:"Modpack Contoh 3", d:"Deskripsi singkat modpack", s:"12 MB", u:"#"}
+];
+const MOD_SELL = [
+  {n:"Modpack Buat Repe/Robber", d:"Android", p:"Rp 10.000"},
+  {n:"Modpack Buat Roleplay Santai", d:"Android", p:"Rp 5.000"},
+  {n:"Modpack Compe Sotot Rp", d:"Android", p:"Rp 7.000"},
+  {n:"Modpack TCW Habis", d:"Android", p:"Rp 3.000"},
+  {n:"Modpack Style Gonzela", d:"Android", p:"Rp 3.000"},
+  {n:"Modpack Cv Little Batley", d:"Android", p:"Rp 3.000"}
+];
+/* Modpack hasil share: disimpan di Supabase (tampil di semua perangkat) */
+const SHARE_KEY = "secretly_shared_mods";   // data lama di browser, dipindah otomatis ke Supabase
+let SHARED = [], SHARED_ERR = "";
+const allFree = () => [...SHARED, ...MOD_FREE];
+async function loadShared(){
+  if(!SB_READY) return;
+  try{
+    const r = await fetch(SB_URL + "/rest/v1/modpacks?select=name,file_type,link,credits,image_url&order=created_at.desc&limit=100", {headers: sbH()});
+    if(!r.ok) throw await sbErr(r);
+    SHARED = (await r.json()).map(x => ({n: x.name, d: "Credits: " + x.credits, s: x.file_type, u: x.link, img: x.image_url}));
+    SHARED_ERR = "";
+  }catch(e){ SHARED_ERR = e.message; }
+  renderMods("mf-list", allFree(), $("mf-q").value, false);
+  if(SHARED_ERR){ const p = document.createElement("p"); p.className = "lead"; p.textContent = "Gagal memuat modpack bersama: " + SHARED_ERR; $("mf-list").prepend(p); }
+}
+async function sbPost(table, row){
+  const r = await fetch(SB_URL + "/rest/v1/" + table, {method: "POST", headers: sbH({"Content-Type": "application/json", Prefer: "return=minimal"}), body: JSON.stringify(row)});
+  if(!r.ok) throw await sbErr(r);
+}
+const postMod = m => sbPost("modpacks", m);
+async function migrateLocal(){
+  if(!SB_READY) return;
+  let old = []; try{ old = JSON.parse(localStorage.getItem(SHARE_KEY) || "[]"); }catch(e){}
+  try{
+    for(let i = old.length - 1; i >= 0; i--){
+      const m = old[i], lk = String(m.u || ""), nm = String(m.n || "").slice(0, 60);
+      if(/^https?:\/\//i.test(lk) && nm.length >= 2){
+        let img = null;
+        if(m.img && /^data:image\//.test(m.img)) img = await sbUpload(await (await fetch(m.img)).blob(), "thumb.jpg");
+        await postMod({name: nm, file_type: String(m.s || "ZIP").slice(0, 20), link: lk, credits: String(m.d || "").replace(/^Credits:\s*/, "").slice(0, 40) || "-", image_url: img});
+      }
+      old.splice(i, 1); localStorage.setItem(SHARE_KEY, JSON.stringify(old));
+    }
+    localStorage.removeItem(SHARE_KEY);
+  }catch(e){}
+}
+
+function card(m, sell){
+  const el = document.createElement("div"); el.className = "item glass";
+  const ic = document.createElement("div"); ic.className = "ic";
+  if(m.img && /^(data:image\/|https:\/\/)/.test(m.img)){ const im = document.createElement("img"); im.src = m.img; im.alt = m.n; ic.appendChild(im); }
+  else ic.innerHTML = '<svg class="i"><use href="#' + (sell ? "cart" : "gift") + '"/></svg>';
+  const inf = document.createElement("div"); inf.className = "inf";
+  const b = document.createElement("b"); b.textContent = m.n;
+  const sm = document.createElement("small"); sm.textContent = m.d;
+  const tg = document.createElement("span"); tg.className = "tag"; tg.textContent = sell ? m.p : m.s;
+  inf.append(b, sm, document.createElement("br"), tg);
+  const a = document.createElement("a"); a.className = "btn go"; a.target = "_blank"; a.rel = "noopener";
+  a.setAttribute("aria-label", sell ? "Beli " + m.n : "Unduh " + m.n);
+  a.href = sell ? "https://wa.me/" + WA + "?text=" + encodeURIComponent("Halo, saya mau beli " + m.n + " (" + m.p + ")") : (/^https?:\/\//i.test(m.u) ? m.u : "#");
+  a.innerHTML = '<svg class="i"><use href="#' + (sell ? "cart" : "dl") + '"/></svg>';
+  el.append(ic, inf, a); return el;
+}
+function renderMods(list, data, q, sell){
+  const box = $(list); box.innerHTML = "";
+  const r = data.filter(m => m.n.toLowerCase().includes(q.toLowerCase()));
+  if(!r.length){ const e = document.createElement("p"); e.className = "lead"; e.textContent = "Modpack tidak ditemukan."; box.appendChild(e); }
+  r.forEach(m => box.appendChild(card(m, sell)));
+}
+$("mf-q").oninput = e => renderMods("mf-list", allFree(), e.target.value, false);
+$("ms-q").oninput = e => renderMods("ms-list", MOD_SELL, e.target.value, true);
+renderMods("mf-list", allFree(), "", false); renderMods("ms-list", MOD_SELL, "", true);
+
+$("s-f").onchange = e => { const f = e.target.files[0]; if(!f) return;
+  $("s-name").textContent = f.name; const p = $("s-prev"); p.src = URL.createObjectURL(f); p.style.display = "block"; };
+function shrink(file){ return new Promise((ok, no) => {
+  const im = new Image(); im.onload = () => { const k = Math.min(1, 320 / Math.max(im.width, im.height));
+    const c = document.createElement("canvas"); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+    c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+    c.toBlob(b => b ? ok(b) : no(new Error("Foto tidak bisa diproses")), "image/jpeg", .78); };
+  im.onerror = () => no(new Error("Foto tidak bisa dibaca")); im.src = URL.createObjectURL(file); }); }
+async function shareMod(){
+  const n = $("s-n").value.trim(), t = $("s-t").value.trim(), l = $("s-l").value.trim(), c = $("s-c").value.trim(), f = $("s-f").files[0];
+  if(!n || !t || !l || !c || !f) return show("s-out", "Semua kolom wajib diisi: nama, jenis file, link, credits, dan foto.", true);
+  if(!/^https?:\/\//i.test(l)) return show("s-out", "Link harus diawali http:// atau https://", true);
+  if(!SB_READY) return show("s-out", "Supabase belum diisi. Isi SB_URL dan SB_KEY di index.html supaya modpack tampil di semua perangkat.", true);
+  const btn = document.querySelector("#share .go"); btn.disabled = true; show("s-out", "Mengirim...");
+  try{
+    const img = await sbUpload(await shrink(f), "thumb.jpg");
+    await postMod({name: n, file_type: t.toUpperCase(), link: l, credits: c, image_url: img});
+    ["s-n","s-t","s-l","s-c","s-f"].forEach(i => $(i).value = "");
+    $("s-name").textContent = "Pilih foto modpack"; $("s-prev").style.display = "none"; $("s-out").className = "out";
+    await loadShared();
+    document.querySelector('.dock [data-page="modfree"]').click();
+  }catch(e){ show("s-out", "Gagal: " + e.message, true); }
+  finally{ btn.disabled = false; }
+}
+
+/* Tools tambahan */
+function json(pretty){ try{ const o = JSON.parse($("j-in").value); show("j-out", pretty ? JSON.stringify(o, null, 2) : JSON.stringify(o), false, true); }
+  catch(e){ show("j-out", "JSON tidak valid: " + e.message, true); } }
+function pw(){ const n = Math.min(64, Math.max(8, parseInt($("p-len").value) || 16));
+  const c = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%^&*";
+  const r = crypto.getRandomValues(new Uint32Array(n)); show("p-out", Array.from(r, x => c[x % c.length]).join(""), false, true); }
+async function sha(){ const v = $("h-in").value; if(!v) return show("h-out", "Isi teks dulu.", true);
+  const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(v));
+  show("h-out", Array.from(new Uint8Array(h), b => b.toString(16).padStart(2, "0")).join(""), false, true); }
+
+/* Base64 dan URL */
+function b64(enc){ const v = $("x-in").value;
+  try{ show("x-out", enc ? btoa(String.fromCharCode(...new TextEncoder().encode(v))) : new TextDecoder().decode(Uint8Array.from(atob(v.trim()), c => c.charCodeAt(0))), false, true); }
+  catch(e){ show("x-out", "Input tidak valid.", true); } }
+function urlc(enc){ const v = $("u-in").value;
+  try{ show("u-out", enc ? encodeURIComponent(v) : decodeURIComponent(v), false, true); }
+  catch(e){ show("u-out", "Input tidak valid.", true); } }
+
+/* ===== v1.2: menu titik tiga, toast, rating, update, bagikan, video ===== */
+const toast = msg => { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("show"), 2200); };
+const menu = $("menu"), ov = $("menu-ov"), mb = $("more-btn");
+function openMenu(){
+  const r = $("topnav").getBoundingClientRect();
+  menu.style.top = (r.bottom + 8) + "px";
+  menu.style.right = Math.max(10, document.documentElement.clientWidth - r.right) + "px";
+  menu.classList.add("show"); ov.classList.add("show"); mb.setAttribute("aria-expanded", "true");
+}
+function closeMenu(){ menu.classList.remove("show"); ov.classList.remove("show"); mb.setAttribute("aria-expanded", "false"); }
+mb.onclick = () => menu.classList.contains("show") ? closeMenu() : openMenu();
+ov.onclick = closeMenu;
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeMenu(); });
+menu.querySelectorAll(".mi").forEach(b => b.addEventListener("click", closeMenu));
+
+/* Lapor bug / saran (WhatsApp developer) */
+const BUG_URL = "https://wa.me/" + WA + "?text=" + encodeURIComponent("Halo, saya mau lapor bug / kasih saran untuk Secretly:\n");
+$("mi-bug").href = BUG_URL; $("help-bug").href = BUG_URL;
+
+/* Bagikan web */
+async function shareSite(){
+  const d = {title: "Secretly Tools", text: "Tools gratis dan modpack di Secretly", url: location.origin + location.pathname};
+  try{ if(navigator.share){ await navigator.share(d); return; } }catch(e){ if(e.name === "AbortError") return; }
+  try{ await navigator.clipboard.writeText(d.url); toast("Link web disalin"); }catch(e){ toast(d.url); }
+}
+$("mi-share").onclick = shareSite;
+
+/* Video latar on/off */
+const VID_KEY = "secretly_novid";
+function applyVid(off){
+  const v = $("bg"); v.style.display = off ? "none" : "";
+  try{ if(off) v.pause(); else { const p = v.play(); if(p && p.catch) p.catch(() => {}); } }catch(e){}
+  $("vid-lbl").textContent = off ? "Nyalakan Video Latar" : "Matikan Video Latar";
+}
+let VID_OFF = false; try{ VID_OFF = localStorage.getItem(VID_KEY) === "1"; }catch(e){}
+$("mi-vid").onclick = () => { VID_OFF = !VID_OFF; try{ localStorage.setItem(VID_KEY, VID_OFF ? "1" : "0"); }catch(e){} applyVid(VID_OFF); toast(VID_OFF ? "Video latar dimatikan" : "Video latar dinyalakan"); };
+if(VID_OFF) applyVid(true);
+
+/* Update terbaru: edit daftar ini setiap kali ada pembaruan (yang terbaru paling atas) */
+const UPDATES = [
+  {v: "1.2", d: "17 Okt 2026", t: "Menu baru, Rating, dan navigasi lebih besar", i: [
+    "Menu titik tiga di kanan atas: akses cepat ke semua halaman dan fitur",
+    "Fitur Rating dan ulasan: nilai Secretly dan baca ulasan pengunjung lain",
+    "Halaman Update Terbaru berisi catatan perubahan",
+    "Bantuan (FAQ), Bagikan Web, dan Lapor Bug / Saran lewat WhatsApp",
+    "Opsi mematikan video latar untuk HP yang berat",
+    "Navigasi bawah lebih besar, lebih lebar, dan sedikit dinaikkan"]},
+  {v: "1.1", d: "17 Okt 2026", t: "Modpack bersama dan tools diperbaiki", i: [
+    "Share Modpack kini tersimpan online dan tampil di semua perangkat",
+    "Bypass Link dan Bypass Web berjalan lewat server sendiri",
+    "Obfuscate Lua diperbaiki (Lua 5.1, 5.3, dan Luau)",
+    "Video ke Link dan Foto ke Link kini permanen (maks 50 MB)"]},
+  {v: "1.0", d: "Rilis awal", t: "Secretly Tools meluncur", i: [
+    "Tools: Bypass Link, Bypass Web, Obfuscate, Video ke Link, Foto ke Link, Base64, JSON, Password, SHA-256, URL Encode",
+    "Modpack Free, Share Modpack, dan Forsell Modpack",
+    "Kontak developer"]}
+];
+const SEEN_KEY = "secretly_seen_ver";
+function seenVer(){ try{ return localStorage.getItem(SEEN_KEY); }catch(e){ return null; } }
+function markSeen(){ try{ localStorage.setItem(SEEN_KEY, UPDATES[0].v); }catch(e){} $("more-dot").classList.remove("show"); $("menu-new").classList.remove("show"); }
+(function(){
+  const box = $("u-list");
+  UPDATES.forEach((u, idx) => {
+    const c = document.createElement("div"); c.className = "card glass";
+    const hd = document.createElement("div"); hd.className = "hd";
+    const v = document.createElement("span"); v.className = "tag"; v.textContent = "v" + u.v;
+    hd.appendChild(v);
+    if(idx === 0){ const n = document.createElement("span"); n.className = "tag new"; n.textContent = "Terbaru"; hd.appendChild(n); }
+    const d = document.createElement("small"); d.textContent = u.d; hd.appendChild(d);
+    const t = document.createElement("h3"); t.textContent = u.t;
+    const ul = document.createElement("ul"); u.i.forEach(x => { const li = document.createElement("li"); li.textContent = x; ul.appendChild(li); });
+    c.append(hd, t, ul); box.appendChild(c);
+  });
+  if(seenVer() !== UPDATES[0].v){ $("more-dot").classList.add("show"); $("menu-new").classList.add("show"); }
+})();
+
+/* Rating (Supabase: tabel ratings + view rating_summary) */
+let RATE = 0;
+const RATED_KEY = "secretly_rated";
+const starsEl = (n, big) => { const s = document.createElement("span"); s.className = "sr" + (big ? " big" : "");
+  for(let i = 1; i <= 5; i++) s.insertAdjacentHTML("beforeend", '<svg class="i' + (i <= n ? " on" : "") + '"><use href="#star"/></svg>'); return s; };
+(function(){
+  const box = $("r-stars");
+  for(let i = 1; i <= 5; i++){
+    const b = document.createElement("button"); b.type = "button"; b.className = "sb"; b.setAttribute("aria-label", i + " bintang");
+    b.innerHTML = '<svg class="i"><use href="#star"/></svg>';
+    b.onclick = () => { RATE = i; [...box.children].forEach((x, k) => x.classList.toggle("on", k < i)); };
+    box.appendChild(b);
+  }
+})();
+async function loadRatings(){
+  if(!SB_READY){ $("r-count").textContent = "Supabase belum diisi"; return; }
+  try{
+    const [a, b] = await Promise.all([
+      fetch(SB_URL + "/rest/v1/rating_summary?select=avg,total", {headers: sbH()}),
+      fetch(SB_URL + "/rest/v1/ratings?select=stars,name,comment,created_at&comment=not.is.null&order=created_at.desc&limit=30", {headers: sbH()})
+    ]);
+    if(!a.ok) throw await sbErr(a); if(!b.ok) throw await sbErr(b);
+    const sm = (await a.json())[0] || {avg: 0, total: 0}, rows = await b.json();
+    const avg = Number(sm.avg) || 0, total = Number(sm.total) || 0;
+    $("r-avg").textContent = total ? avg.toFixed(1) : "-";
+    $("r-avgstars").innerHTML = ""; $("r-avgstars").appendChild(starsEl(Math.round(avg), true));
+    $("r-count").textContent = total ? total + " ulasan" : "Belum ada rating. Jadilah yang pertama!";
+    $("h-rate").textContent = total ? avg.toFixed(1) + " (" + total + ")" : "Rating";
+    const list = $("r-list"); list.innerHTML = "";
+    if(!rows.length){ const p = document.createElement("p"); p.className = "lead"; p.textContent = "Belum ada ulasan."; list.appendChild(p); }
+    rows.forEach(x => {
+      const c = document.createElement("div"); c.className = "rv glass";
+      const top = document.createElement("div"); top.className = "top";
+      const nm = document.createElement("b"); nm.textContent = x.name || "Anonim";
+      const dt = document.createElement("small"); dt.textContent = new Date(x.created_at).toLocaleDateString("id-ID", {day: "numeric", month: "short", year: "numeric"});
+      top.append(nm, starsEl(x.stars), dt);
+      const p = document.createElement("p"); p.textContent = x.comment;
+      c.append(top, p); list.appendChild(c);
+    });
+  }catch(e){ $("r-count").textContent = "Gagal memuat: " + e.message; }
+}
+async function sendRating(){
+  if(!SB_READY) return show("r-out", "Supabase belum diisi. Isi SB_URL dan SB_KEY di index.html.", true);
+  if(!RATE) return show("r-out", "Pilih jumlah bintang dulu.", true);
+  let done = false; try{ done = localStorage.getItem(RATED_KEY) === "1"; }catch(e){}
+  if(done) return show("r-out", "Kamu sudah memberi rating dari perangkat ini. Terima kasih!", true);
+  const name = $("r-n").value.trim().slice(0, 30) || null, comment = $("r-c").value.trim().slice(0, 200) || null;
+  const btn = document.querySelector("#rating .go"); btn.disabled = true; show("r-out", "Mengirim...");
+  try{
+    await sbPost("ratings", {stars: RATE, name, comment});
+    try{ localStorage.setItem(RATED_KEY, "1"); }catch(e){}
+    show("r-out", "Terima kasih atas ratingmu!");
+    $("r-n").value = ""; $("r-c").value = "";
+    await loadRatings();
+  }catch(e){ show("r-out", "Gagal mengirim: " + e.message, true); }
+  finally{ btn.disabled = false; }
+}
+
+/* Mulai */
+(async () => { await migrateLocal(); await loadShared(); })();
+loadRatings();
+</script>
+</body>
+</html>
