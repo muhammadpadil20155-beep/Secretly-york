@@ -182,6 +182,68 @@ async function resolve(start, dbg) {
   return { url, kind: "page", trail, html };
 }
 
+/* ---------- Mode browser (Chromium) ----------
+   Dipakai kalau cara biasa gagal: menjalankan JavaScript halaman, menunggu timer,
+   menekan tombol lanjut/get link, lalu menangkap tujuan akhir (mediafire dll).
+   Tidak menyelesaikan captcha. */
+let chromium = null, puppeteer = null;
+try { chromium = require("@sparticuz/chromium"); puppeteer = require("puppeteer-core"); } catch (e) { /* belum terpasang */ }
+const FILE_HOST = /mediafire\.com|drive\.google\.com|mega\.nz|dropbox\.com|gofile\.io|pixeldrain|sfile\.|anonfiles|github\.com|\.(zip|rar|7z|apk|lua|mp4|txt)(\?|#|$)/i;
+const CLICK_RE = "get\\s*link|continue|lanjut|unlock|download|dapatkan|buka|skip|go\\s*to|verify|open";
+
+async function browserResolve(start, ms) {
+  if (!chromium || !puppeteer) throw new Error("Mode browser belum terpasang (cek package.json)");
+  const end = Date.now() + ms, startHost = new URL(start).hostname, okHost = new Map();
+  let found = null;
+  const browser = await puppeteer.launch({
+    args: chromium.args,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless || "shell",
+    defaultViewport: { width: 412, height: 800 }
+  });
+  try {
+    const page = await browser.newPage();
+    await page.setUserAgent(UA);
+    await page.evaluateOnNewDocument(() => { window.open = u => { if (u) location.href = u; return null; }; });
+    await page.setRequestInterception(true);
+    page.on("request", async rq => {
+      try {
+        const type = rq.resourceType(), u = rq.url();
+        if (["image", "font", "media", "stylesheet"].includes(type)) return rq.abort();
+        if (!/^https?:/i.test(u)) return rq.continue();
+        const host = new URL(u).hostname;
+        if (!okHost.has(host)) { try { await assertPublic(u); okHost.set(host, true); } catch (e) { okHost.set(host, false); } }
+        if (!okHost.get(host)) return rq.abort();
+        if (rq.isNavigationRequest() && rq.frame() === page.mainFrame() && host !== startHost && FILE_HOST.test(u)) { found = u; return rq.abort(); }
+        return rq.continue();
+      } catch (e) { try { rq.continue(); } catch (_) {} }
+    });
+    await page.goto(start, { waitUntil: "domcontentloaded", timeout: 15000 }).catch(() => {});
+    while (!found && Date.now() < end) {
+      await new Promise(r => setTimeout(r, 1500));
+      const cur = page.url();
+      if (cur && new URL(cur).hostname !== startHost && FILE_HOST.test(cur)) { found = cur; break; }
+      let html = ""; try { html = await page.content(); } catch (e) { continue; }
+      const n = findNext(html, cur);
+      if (n && FILE_HOST.test(n)) { found = n; break; }
+      await page.evaluate(re => {
+        const rx = new RegExp(re, "i");
+        const els = [...document.querySelectorAll("a,button,input[type=submit],[role=button]")];
+        for (const el of els) {
+          const t = (el.innerText || el.value || el.id || "").trim();
+          const r = el.getBoundingClientRect();
+          if (!rx.test(t) || el.disabled || r.width < 5 || r.height < 5) continue;
+          if (el.tagName === "A") el.target = "_self";
+          el.click(); return;
+        }
+      }, CLICK_RE).catch(() => {});
+    }
+    if (found) return found;
+    const last = page.url();
+    return last && last !== start && new URL(last).hostname !== startHost ? last : null;
+  } finally { try { await browser.close(); } catch (e) {} }
+}
+
 /* ---------- Handler ---------- */
 module.exports = async (req, res) => {
   res.setHeader("Cache-Control", "no-store");
@@ -209,12 +271,21 @@ module.exports = async (req, res) => {
     if (q.debug === "1") return send(200, { debug: dbg, result: r.url, kind: r.kind });
     const changed = r.url !== target;
     const links = mode === "web" && r.html ? anchors(r.html, r.url).filter(a => a.score > 0).slice(0, 15) : [];
-    if (r.kind === "file" || changed || links.length) {
+    if (r.kind === "file" || links.length) {
       return send(200, { ok: true, result: r.url, kind: r.kind, trail: r.trail, links });
     }
+    // Cara biasa belum sampai file: coba mode browser
+    let berr = "";
+    if (chromium && puppeteer && process.env.SECRETLY_BROWSER !== "0") {
+      try {
+        const u = await browserResolve(target, 38000);
+        if (u) return send(200, { ok: true, result: u, kind: "browser" });
+      } catch (e) { berr = " (mode browser: " + e.message + ")"; }
+    } else berr = " (mode browser belum aktif)";
+    if (changed) return send(200, { ok: true, result: r.url, kind: r.kind, trail: r.trail, links });
     return send(200, {
       ok: false,
-      error: "Tujuan tidak ditemukan. Kemungkinan situs ini memakai captcha, timer berbasis token, atau iklan yang hanya jalan di browser asli."
+      error: "Tujuan tidak ditemukan. Situs ini kemungkinan memakai captcha atau verifikasi yang tidak bisa dilewati otomatis." + berr
     });
   } catch (e) {
     return send(200, { ok: false, error: e.message || "Terjadi kesalahan" });
